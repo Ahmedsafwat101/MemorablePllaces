@@ -8,6 +8,7 @@ import androidx.fragment.app.FragmentActivity;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -162,7 +163,25 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         MainActivity.places.add(Address);
         MainActivity.placesCoordinates.add(latLng);
         MainActivity.placesArrayAdapter.notifyDataSetChanged();
-        Log.i("list1", MainActivity.placesCoordinates.toString());
+        // Using SharedPreferences
+        SharedPreferences sharedPreferences = this.getSharedPreferences("package com.example.myapplication",MODE_PRIVATE);
+        try {
+            ArrayList<String>latLngLatitude= new ArrayList<>();
+            ArrayList<String>latLngLongitude= new ArrayList<>();
+
+            for(LatLng coordinates: MainActivity.placesCoordinates )
+            {
+                latLngLatitude.add(Double.toString(coordinates.latitude));
+                latLngLongitude.add(Double.toString(coordinates.longitude));
+
+            }
+            sharedPreferences.edit().putString("places",ObjectSerializer.serialize(MainActivity.places)).apply();
+            sharedPreferences.edit().putString("latitude",ObjectSerializer.serialize(latLngLatitude)).apply();
+            sharedPreferences.edit().putString("longitude",ObjectSerializer.serialize(latLngLongitude)).apply();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
     }
 
